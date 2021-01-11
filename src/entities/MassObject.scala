@@ -5,7 +5,7 @@ import gamemath.VectorD
 
 import java.util
 
-class RadarObject (val width: Double, val height: Double, val MOI: Double, val mass: Double){
+class MassObject(val width: Double, val length: Double, val MOI: Double, val mass: Double){
   protected var pos = VectorD(0,0)
   protected var velocity = VectorD(0,0)
   protected var acceleration = VectorD(0,0)
@@ -32,10 +32,10 @@ class RadarObject (val width: Double, val height: Double, val MOI: Double, val m
   }
 
   def getBoundaries(): util.ArrayList[Boundary] = {
-    val a = rotatePoint((VectorD(pos.x+0.5*width,pos.y-0.5*height)),pos.x,pos.y)
-    val b = rotatePoint((VectorD(pos.x+0.5*width,pos.y+0.5*height)),pos.x,pos.y)
-    val c = rotatePoint((VectorD(pos.x-0.5*width,pos.y+0.5*height)),pos.x,pos.y)
-    val d = rotatePoint((VectorD(pos.x-0.5*width,pos.y-0.5*height)),pos.x,pos.y)
+    val a = rotatePoint((VectorD(pos.x+0.5*width,pos.y-0.5*length)),pos.x,pos.y)
+    val b = rotatePoint((VectorD(pos.x+0.5*width,pos.y+0.5*length)),pos.x,pos.y)
+    val c = rotatePoint((VectorD(pos.x-0.5*width,pos.y+0.5*length)),pos.x,pos.y)
+    val d = rotatePoint((VectorD(pos.x-0.5*width,pos.y-0.5*length)),pos.x,pos.y)
 
     val boundAB = new Boundary(a,b)
     val boundBC = new Boundary(b,c)

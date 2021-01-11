@@ -14,11 +14,11 @@ public class RadarPing{
         brightness = brightnessIn;
     }
 
-    public void draw(PApplet context){
+    public void draw(Main context){
         age++;
         //int fillLevel = Math.round(context.map((float)brightness,0,1,0,255));
         context.noStroke();
         context.fill(255);
-        context.circle(pos.xFloat(),pos.yFloat(),10);
+        context.circle(pos.xFloat(),pos.yFloat(),10 * (1/context.scalingFactor));
     }
 }

@@ -16,7 +16,7 @@ public class RadarEmitter {
     private Integrator integ;
     private double rotationRate = 0.0003;
     private double currentAngle = 0;
-    private ArrayList<RadarObject> radarObjects;
+    private ArrayList<MassObject> massObjects;
     private RadarBeamGraphic radarBeamGraphic;
     
     public RadarEmitter(){

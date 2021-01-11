@@ -20,7 +20,7 @@ public class ShipGraphic {
             context.rotate(angle);
             context.translate(pos.xFloat(),pos.yFloat());
 
-            context.rect(0,0,100,10);
+            context.rect(0,0,10,100);
         context.popMatrix();
     }
 }
