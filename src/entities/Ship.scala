@@ -6,7 +6,7 @@ import processing.core.PApplet
 
 import java.util
 
-class Ship(override val width: Double, override  val length: Double, override  val MOI: Double, override  val mass: Double, val graphic: ShipGraphic) extends
+class Ship(override val width: Double, override  val length: Double, override  val MOI: Double, override  val mass: Double, val graphic: ShipGraphic, val playerShip: Boolean) extends
   MassObject (width: Double,length: Double, MOI: Double, mass: Double){
   private val integ = Integrator
   private var torque = 0.0
@@ -23,7 +23,7 @@ class Ship(override val width: Double, override  val length: Double, override  v
     rotation = rotation + rot
   }
 
-  def tick(radarObjectList: util.ArrayList[Ship],context: Main): Unit ={
+  def tick(massObjects: util.ArrayList[MassObject], context: Main): Unit ={
     val deltaTime = 1.0/60.0
     val engineForce = VectorD(0,0).fromPolar(enginePower,this.rotation)
     //val friction = ((0.25 * (length + mass + MOI)) + width) * 5
@@ -38,8 +38,7 @@ class Ship(override val width: Double, override  val length: Double, override  v
     angularVelocity = integ.stepAngluarVelocity(angularAcceleration,angularVelocity,deltaTime) * 0.99
     rotation = integ.stepRotation(angularVelocity,rotation,deltaTime)
 
-    radarEmitter.update(radarObjectList,this.pos);
-    //netForce = new VectorD(0,0)
+    if(playerShip) radarEmitter.update(massObjects,this.pos);
   }
 
   def enginePowerAdd(force: Double): Unit = {

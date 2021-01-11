@@ -24,7 +24,7 @@ public class RadarEmitter {
         radarBeamGraphic = new RadarBeamGraphic();
     }
     
-    public void update(ArrayList<Ship> radarObjects, VectorD radarOrigin) {
+    public void update(ArrayList<MassObject> radarObjects, VectorD radarOrigin) {
         double deltaTime = 1.0/60.0;
 
         currentAngle = integ.stepRotation(rotationRate,currentAngle,deltaTime);
@@ -34,7 +34,7 @@ public class RadarEmitter {
 
 
 
-        for (Ship radObj: radarObjects) {
+        for (MassObject radObj: radarObjects) {
             for (Boundary bound:radObj.getBoundaries()) {
                 //bound.draw(this);
                 RadarPing ping = ray.cast(bound);

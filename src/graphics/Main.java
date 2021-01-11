@@ -1,5 +1,7 @@
 package graphics;
 
+import entities.Dumbfire;
+import entities.MassObject;
 import entities.Ship;
 import gamemath.VectorD;
 import processing.core.PApplet;
@@ -10,16 +12,18 @@ import java.util.ArrayList;
 
 public class Main extends PApplet {
     public static final double MAX_TURN_RATE = 0.3;
-    public static final int MAX_POWER = 4000;
+    public static final int MAX_POWER = 8000;
+    public static final int viewWidth = 1000;
+    public static final int viewHeight = 1000;
 
-    static ArrayList<Ship> radarObjects = new ArrayList<Ship>();
+    static ArrayList<MassObject> massbjects = new ArrayList<MassObject>();
     static ArrayList<RadarPing> radarPings = new ArrayList<RadarPing>();
     public float scalingFactor = 1;
 
     Ship player;
 
-    Ship testO = new Ship(10,100,3,100,new ShipGraphic());
-    Ship test1 = new Ship(10,100,3,100,new ShipGraphic());
+    Ship testO = new Ship(10,100,3,100,new ShipGraphic(),false);
+    Ship test1 = new Ship(10,100,3,100,new ShipGraphic(),false);
 
 
     public static void main(String[] args) {
@@ -28,17 +32,18 @@ public class Main extends PApplet {
     }
 
     public void settings(){
-        size(1000,1000);
+        size(viewWidth,viewHeight);
     }
 
     public void setup(){
-        player = new Ship(14,100,3000,3000,new ShipGraphic());
+        player = new Ship(14,100,3000,3000,new ShipGraphic(),true);
         player.setPos(new VectorD(0,0));
         //player.impulse(new VectorD(100,0));
-        testO.setPos(new VectorD(7000,6000));
-        test1.setPos(new VectorD(7000,19000));
-        radarObjects.add(testO);
-        radarObjects.add(test1);
+        testO.setPos(new VectorD(1000,600));
+        testO.impulse(new VectorD(1,100));
+        test1.setPos(new VectorD(700,190));
+        massbjects.add(testO);
+        massbjects.add(test1);
         //radarObjects.add(player);
     }
 
@@ -47,16 +52,19 @@ public class Main extends PApplet {
 
         text("Engine Power: " + player.getEnginePower(), 10,100);
         text("Ship Speed " + round((float)player.velocity().r()),10,112);
+        player.tick(massbjects,this);
+        testO.tick(massbjects,this);
 
-        //text("Sc :" + scalingFactor, mouseX, mouseY - 24);
-        text("X: " + mx(),mouseX,mouseY - 12);
-        text("Y: " + my(),mouseX,mouseY);
+        text("Sc :" + scalingFactor, mouseX, mouseY - 24);
+        text("absolute X: " + absoluteX(),mouseX,mouseY - 12);
+        text("absolute Y: " + absoluteY(),mouseX,mouseY);
 
-        pushMatrix();
 
-        //scale(scalingFactor);
-        translate(-player.pos().xFloat()+500,-player.pos().yFloat()+500);
-        player.tick(radarObjects,this);
+        scale(scalingFactor);
+
+
+        translate(-player.pos().xFloat()+((viewWidth/2)*(1/scalingFactor)),-player.pos().yFloat()+((viewHeight/2)*(1/scalingFactor)));
+        //rotate((float)player.rotation());
         player.draw(this);
 
         for(int i = 0; i < radarPings.size(); i++){
@@ -64,14 +72,21 @@ public class Main extends PApplet {
             ping.draw(this);
             if(ping.age > RadarPing.MAX_AGE) { radarPings.remove(i);}
         }
-        popMatrix();
+
+        for(int i = 0; i < massbjects.size(); i++){
+            MassObject massObj = massbjects.get(i);
+            if(!massObj.alive()){
+                massbjects.remove(i);
+            }
+        }
 
     }
 
     public void mouseReleased(){
-        Ship s = new Ship(10,100,1000,100,new ShipGraphic());
-        s.setPos(new VectorD(mx(),my()));
-        radarObjects.add(s);
+        //Ship sip = new Ship(10,100,1000,100,new ShipGraphic(),false);
+        Dumbfire s = new Dumbfire(1,3,1,0.8);
+        s.setPos(new VectorD(absoluteX(), absoluteY()));
+        massbjects.add(s);
         //player.moveTo(mouseX,mouseY);
     }
 
@@ -99,11 +114,11 @@ public class Main extends PApplet {
     }
 
     public void playerFaster(){
-        player.enginePowerAdd(1000);
+        player.enginePowerAdd(200);
     }
 
     public void playerSlower(){
-        player.enginePowerAdd(-1000);
+        player.enginePowerAdd(-200);
     }
 
     public void playerTurnLeftMore(){
@@ -142,11 +157,19 @@ public class Main extends PApplet {
         radarPings.add(ping);
     }
 
-    public float mx(){
-        return mouseX / scalingFactor;
+    private float xCorrection(){
+        return -player.pos().xFloat()+((viewWidth/2)*(1/scalingFactor));
     }
 
-    public float my(){
-        return mouseY / scalingFactor;
+    private float yCorrection(){
+        return -player.pos().yFloat()+((viewHeight/2)*(1/scalingFactor));
+    }
+
+    public float absoluteX(){
+        return ((mouseX/scalingFactor - xCorrection()));
+    }
+
+    public float absoluteY(){
+        return ((mouseY/scalingFactor - yCorrection()));
     }
 }

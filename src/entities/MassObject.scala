@@ -12,6 +12,9 @@ class MassObject(val width: Double, val length: Double, val MOI: Double, val mas
   protected var angularAcceleration = 0.0
   protected var angularVelocity = 0.0
   protected var rotation = 0.0
+  private var health = 8000.0
+  var alive = true
+
 
   def setPos(newPos: VectorD): Unit ={
     pos = VectorD(newPos.x,newPos.y)
@@ -49,6 +52,17 @@ class MassObject(val width: Double, val length: Double, val MOI: Double, val mas
     bList.add(boundDA)
 
     return bList
+  }
+
+  def getPos(): VectorD = {
+    this.pos.copy()
+  }
+
+  def doDamage(damage: Double): Unit ={
+    health = health - damage
+    if(health < 0){
+      alive = false
+    }
   }
 
 }
