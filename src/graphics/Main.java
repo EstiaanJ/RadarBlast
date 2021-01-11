@@ -9,6 +9,9 @@ import processing.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Main extends PApplet {
+    public static final double MAX_TURN_RATE = 0.3;
+    public static final int MAX_POWER = 4000;
+
     static ArrayList<Ship> radarObjects = new ArrayList<Ship>();
     static ArrayList<RadarPing> radarPings = new ArrayList<RadarPing>();
     public float scalingFactor = 1;
@@ -29,13 +32,14 @@ public class Main extends PApplet {
     }
 
     public void setup(){
-        player = new Ship(14,100,3,3000,new ShipGraphic());
-        player.setPos(new VectorD(100,100));
-        player.impulse(new VectorD(100,0));
-        testO.setPos(new VectorD(700,600));
-        test1.setPos(new VectorD(7000,600));
+        player = new Ship(14,100,3000,3000,new ShipGraphic());
+        player.setPos(new VectorD(0,0));
+        //player.impulse(new VectorD(100,0));
+        testO.setPos(new VectorD(7000,6000));
+        test1.setPos(new VectorD(7000,19000));
         radarObjects.add(testO);
         radarObjects.add(test1);
+        //radarObjects.add(player);
     }
 
     public void draw(){
@@ -44,12 +48,14 @@ public class Main extends PApplet {
         text("Engine Power: " + player.getEnginePower(), 10,100);
         text("Ship Speed " + round((float)player.velocity().r()),10,112);
 
-        text("Sc :" + scalingFactor, mouseX, mouseY - 24);
+        //text("Sc :" + scalingFactor, mouseX, mouseY - 24);
         text("X: " + mx(),mouseX,mouseY - 12);
         text("Y: " + my(),mouseX,mouseY);
 
         pushMatrix();
-        scale(scalingFactor);
+
+        //scale(scalingFactor);
+        translate(-player.pos().xFloat()+500,-player.pos().yFloat()+500);
         player.tick(radarObjects,this);
         player.draw(this);
 
@@ -63,7 +69,7 @@ public class Main extends PApplet {
     }
 
     public void mouseReleased(){
-        Ship s = new Ship(10,100,3,100,new ShipGraphic());
+        Ship s = new Ship(10,100,1000,100,new ShipGraphic());
         s.setPos(new VectorD(mx(),my()));
         radarObjects.add(s);
         //player.moveTo(mouseX,mouseY);
@@ -82,29 +88,38 @@ public class Main extends PApplet {
                 break;
             case 'd':
                 playerTurnRightMore();
-            case 'x':
+                break;
+            case 'q':
                 playerResetTurn();
+                break;
+            case 'e':
+                playerZeroEngine();
+                break;
         }
     }
 
     public void playerFaster(){
-        player.engineForceAdd(1000);
+        player.enginePowerAdd(1000);
     }
 
     public void playerSlower(){
-        player.engineForceAdd(-1000);
+        player.enginePowerAdd(-1000);
     }
 
     public void playerTurnLeftMore(){
-
+        player.turnRateAdd(0.04);
     }
 
     public void playerTurnRightMore(){
-
+        player.turnRateAdd(-0.04);
     }
 
     public void playerResetTurn(){
+        player.zeroTurn();
+    }
 
+    public void playerZeroEngine(){
+        player.zeroEnginePower();
     }
 
     public void mouseWheel(MouseEvent event){

@@ -25,34 +25,73 @@ class Ship(override val width: Double, override  val length: Double, override  v
 
   def tick(radarObjectList: util.ArrayList[Ship],context: Main): Unit ={
     val deltaTime = 1.0/60.0
-    val engineForce = new VectorD(0,0).fromPolar(enginePower,this.rotation)
+    val engineForce = VectorD(0,0).fromPolar(enginePower,this.rotation)
     //val friction = ((0.25 * (length + mass + MOI)) + width) * 5
 
     netForce = engineForce
     acceleration = integ.stepAcceleration(netForce,mass)
-    velocity = integ.stepVelocity(acceleration,velocity,deltaTime).scale(0.99)
+    velocity = integ.stepVelocity(acceleration,velocity,deltaTime).scale(0.999)
     pos = integ.stepPosition(velocity,pos,deltaTime);
 
+    torque = turnRate
     angularAcceleration = integ.stepAngularAcceleration(torque,MOI * mass)
-    angularVelocity = integ.stepAngluarVelocity(angularAcceleration,angularVelocity,deltaTime)
+    angularVelocity = integ.stepAngluarVelocity(angularAcceleration,angularVelocity,deltaTime) * 0.99
     rotation = integ.stepRotation(angularVelocity,rotation,deltaTime)
 
-    radarEmitter.update(radarObjectList,this.pos,context);
+    radarEmitter.update(radarObjectList,this.pos);
     //netForce = new VectorD(0,0)
   }
 
-  def engineForceAdd(force: Double): Unit = {
-    enginePower = enginePower + force
+  def enginePowerAdd(force: Double): Unit = {
+    if(enginePower > Main.MAX_POWER) {
+      if(force < 0){
+        enginePower = enginePower + force
+      }
+    } else if (enginePower < -Main.MAX_POWER) {
+      if(force > 0){
+        enginePower = enginePower + force
+      }
+    } else {
+      enginePower = enginePower + force
+    }
+
+
   }
 
   def getEnginePower(): Double ={
     this.enginePower
   }
 
+  def zeroEnginePower(): Unit ={
+    enginePower = 0;
+  }
 
-  def draw(context: PApplet): Unit ={
+  def turnRateAdd(added: Double): Unit ={
+    if(turnRate > 0.2){
+      if(added < 0){
+        turnRate += added
+      }
+    } else if( turnRate < -0.2) {
+      if(added > 0){
+        turnRate += added
+      }
+    } else {
+      turnRate += added
+    }
+  }
+
+  def getTurnRate(): Double ={
+    this.turnRate
+  }
+
+  def zeroTurn(): Unit ={
+    turnRate = 0
+  }
+
+  def draw(context: Main): Unit ={
     graphic.updatePos(this.pos,this.rotation)
     graphic.draw(context)
+    radarEmitter.draw(context)
     //radarEmitter.draw(context)
   }
 }

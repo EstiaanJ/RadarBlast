@@ -17,8 +17,9 @@ public class ShipGraphic {
         context.noStroke();
         context.fill(255);
         context.pushMatrix();
-            context.rotate(angle);
-            context.translate(pos.xFloat(),pos.yFloat());
+            //context.translate(pos.xFloat(),pos.yFloat());
+            context.rotate(-angle);
+
 
             context.rect(0,0,10,100);
         context.popMatrix();

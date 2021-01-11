@@ -18,18 +18,18 @@ public class RadarEmitter {
     private double currentAngle = 0;
     private ArrayList<MassObject> massObjects;
     private RadarBeamGraphic radarBeamGraphic;
+    private Raycast ray;
     
     public RadarEmitter(){
         radarBeamGraphic = new RadarBeamGraphic();
     }
     
-    public void update(ArrayList<Ship> radarObjects, VectorD radarOrigin, Main context) {
+    public void update(ArrayList<Ship> radarObjects, VectorD radarOrigin) {
         double deltaTime = 1.0/60.0;
 
         currentAngle = integ.stepRotation(rotationRate,currentAngle,deltaTime);
 
-        Raycast ray = new Raycast(radarOrigin,new VectorD(0,0).fromPolar(Constants.RADAR_DISTANNCE,currentAngle));
-        ray.draw(context);
+        ray = new Raycast(radarOrigin,new VectorD(0,0).fromPolar(Constants.RADAR_DISTANNCE,currentAngle));
         radarBeamGraphic.updatePos(ray.origin(),ray.direction());
 
 
@@ -43,8 +43,7 @@ public class RadarEmitter {
         }
     }
 
-    public void draw(PApplet context){
-
-        //radarBeamGraphic.draw(context);
+    public void draw(Main context){
+        ray.draw(context);
     }
 }
