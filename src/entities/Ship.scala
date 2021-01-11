@@ -1,7 +1,6 @@
 package entities
 
-import gamemath.Raycasting.Boundary
-import graphics.ShipGraphic
+import graphics.{Main, ShipGraphic}
 import gamemath.{Integrator, VectorD}
 import processing.core.PApplet
 
@@ -22,7 +21,7 @@ class Ship(override val width: Double,override  val height: Double,override  val
     rotation = rotation + rot
   }
 
-  def tick(radarObjectList: util.ArrayList[Ship],context: PApplet): Unit ={
+  def tick(radarObjectList: util.ArrayList[Ship],context: Main): Unit ={
     val deltaTime = 1.0/60.0
 
     acceleration = integ.stepAcceleration(netForce,mass)

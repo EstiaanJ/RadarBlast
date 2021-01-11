@@ -1,13 +1,14 @@
 package gamemath.Raycasting
 
 import gamemath.VectorD
-import graphics.RadarPing
+import graphics.{Main, RadarPing}
 import processing.core.PApplet
 
 class Raycast(val origin: VectorD, val direction: VectorD) {
 
-  def draw(context: PApplet): Unit ={
+  def draw(context: Main): Unit ={
     context.stroke(0,255,0);
+    context.strokeWeight(1/context.scalingFactor)
     context.line(this.origin.xFloat(),this.origin.yFloat(),direction.xFloat(),direction.yFloat())
   }
 

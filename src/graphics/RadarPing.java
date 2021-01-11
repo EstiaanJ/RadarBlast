@@ -5,8 +5,7 @@ import processing.core.PApplet;
 
 public class RadarPing{
     public static final int MAX_AGE = 300;
-
-    VectorD pos;
+    public VectorD pos;
     double brightness;
     public int age = 0;
 
@@ -18,7 +17,8 @@ public class RadarPing{
     public void draw(PApplet context){
         age++;
         //int fillLevel = Math.round(context.map((float)brightness,0,1,0,255));
-        context.stroke(255);
-        context.point(pos.xFloat(),pos.yFloat());
+        context.noStroke();
+        context.fill(255);
+        context.circle(pos.xFloat(),pos.yFloat(),10);
     }
 }

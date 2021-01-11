@@ -23,7 +23,7 @@ public class RadarEmitter {
         radarBeamGraphic = new RadarBeamGraphic();
     }
     
-    public void update(ArrayList<Ship> radarObjects, VectorD radarOrigin, PApplet context) {
+    public void update(ArrayList<Ship> radarObjects, VectorD radarOrigin, Main context) {
         double deltaTime = 1.0/60.0;
 
         currentAngle = integ.stepRotation(rotationRate,currentAngle,deltaTime);
