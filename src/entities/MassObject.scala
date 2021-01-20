@@ -1,11 +1,15 @@
 package entities
 
 import gamemath.Raycasting.Boundary
-import gamemath.VectorD
+import gamemath.{Integrator, VectorD}
+import graphics.Main
 
 import java.util
 
 class MassObject(val width: Double, val length: Double, val MOI: Double, val mass: Double){
+  protected val integ = Integrator
+  protected var torque = 0.0
+  protected var netForce = VectorD(0,0)
   protected var pos = VectorD(0,0)
   protected var velocity = VectorD(0,0)
   protected var acceleration = VectorD(0,0)
@@ -54,8 +58,19 @@ class MassObject(val width: Double, val length: Double, val MOI: Double, val mas
     return bList
   }
 
+  def tick(): Unit ={
+    val deltaTime = 1.0/60.0
+    acceleration = integ.stepAcceleration(netForce,mass)
+    velocity = integ.stepVelocity(acceleration,velocity,deltaTime).scale(0.999)
+    pos = integ.stepPosition(velocity,pos,deltaTime);
+
+    angularAcceleration = integ.stepAngularAcceleration(torque,MOI * mass)
+    angularVelocity = integ.stepAngluarVelocity(angularAcceleration,angularVelocity,deltaTime) * 0.99
+    rotation = integ.stepRotation(angularVelocity,rotation,deltaTime)
+  }
+
   def getPos(): VectorD = {
-    this.pos.copy()
+    return VectorD(pos.x,pos.y)
   }
 
   def doDamage(damage: Double): Unit ={
@@ -63,6 +78,7 @@ class MassObject(val width: Double, val length: Double, val MOI: Double, val mas
     if(health < 0){
       alive = false
     }
+    System.out.println("Bang! : " + health)
   }
 
 }

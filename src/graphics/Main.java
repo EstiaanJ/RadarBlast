@@ -18,6 +18,7 @@ public class Main extends PApplet {
 
     static ArrayList<MassObject> massbjects = new ArrayList<MassObject>();
     static ArrayList<RadarPing> radarPings = new ArrayList<RadarPing>();
+    ArrayList<Dumbfire> missiles = new ArrayList<Dumbfire>();
     public float scalingFactor = 1;
 
     Ship player;
@@ -52,8 +53,8 @@ public class Main extends PApplet {
 
         text("Engine Power: " + player.getEnginePower(), 10,100);
         text("Ship Speed " + round((float)player.velocity().r()),10,112);
-        player.tick(massbjects,this);
-        testO.tick(massbjects,this);
+        player.tick(massbjects);
+        testO.tick(massbjects);
 
         text("Sc :" + scalingFactor, mouseX, mouseY - 24);
         text("absolute X: " + absoluteX(),mouseX,mouseY - 12);
@@ -73,6 +74,17 @@ public class Main extends PApplet {
             if(ping.age > RadarPing.MAX_AGE) { radarPings.remove(i);}
         }
 
+        for(int i = 0; i < missiles.size(); i++){
+            Dumbfire missile = missiles.get(i);
+            missile.tick();
+            for (MassObject mass: massbjects) {
+                if(mass != missile){missile.checkFuseRadius(mass,this); }
+            }
+            if(!missile.alive()){
+                missiles.remove(i);
+            }
+        }
+
         for(int i = 0; i < massbjects.size(); i++){
             MassObject massObj = massbjects.get(i);
             if(!massObj.alive()){
@@ -84,9 +96,14 @@ public class Main extends PApplet {
 
     public void mouseReleased(){
         //Ship sip = new Ship(10,100,1000,100,new ShipGraphic(),false);
-        Dumbfire s = new Dumbfire(1,3,1,0.8);
-        s.setPos(new VectorD(absoluteX(), absoluteY()));
+        Dumbfire s = new Dumbfire(3,16,1,0.8);
+        s.setPos(player.getPos());
+        VectorD directVec = new VectorD(absoluteX(),absoluteY());
+        double direction = player.getPos().bearingTo(directVec);
+        VectorD velVec = new VectorD(0,0).fromPolar(1000,direction);
+        s.impulse(velVec);
         massbjects.add(s);
+        missiles.add(s);
         //player.moveTo(mouseX,mouseY);
     }
 

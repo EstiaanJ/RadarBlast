@@ -45,7 +45,7 @@ case class VectorD(val x: Double, val y: Double) {
   }
 
   def distanceTo(vector: VectorD): Double = {
-    Math.abs(this.subtractBearing(vector))
+    Math.abs(this.r() - vector.r())
   }
 
   def r (): Double = {
@@ -95,6 +95,10 @@ case class VectorD(val x: Double, val y: Double) {
     else {
       return flippedAngle + 2 * Math.PI
     }
+  }
+
+  def copy(): VectorD = {
+    return VectorD(this.x,this.y)
   }
 
   override def toString: String = {
